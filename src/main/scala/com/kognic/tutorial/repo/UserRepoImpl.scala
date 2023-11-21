@@ -6,9 +6,14 @@ import spray.json._
 
 import java.nio.file.Path
 import scala.io.Source
+import scala.util.{Failure, Success, Using}
 
 object UserRepoImpl extends UserRepo {
-  override def getUser(userId: Int): User = ???
+  override def getUser(userId: Int): User =
+    Using(openSource(userId))(id => parseUser(id)) match {
+      case Failure(exception) => throw exception
+      case Success(user) => user
+    }
 
   private def openSource(userId: Int): Source = {
     val userPath = Path.of(s"/user_$userId.json")
