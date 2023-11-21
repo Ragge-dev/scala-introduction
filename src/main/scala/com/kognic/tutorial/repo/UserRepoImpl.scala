@@ -1,11 +1,11 @@
 package com.kognic.tutorial.repo
 
 import com.kognic.tutorial.User
+import spray.json.DefaultJsonProtocol._
+import spray.json._
 
 import java.nio.file.Path
 import scala.io.Source
-
-import spray.json._
 
 object UserRepoImpl extends UserRepo {
   override def getUser(userId: Int): User = ???
@@ -20,6 +20,7 @@ object UserRepoImpl extends UserRepo {
   }
 
   private def parseUser(userSource: Source): User = {
+    implicit val userJsonFormat: RootJsonFormat[User] = jsonFormat3(User.apply)
     userSource.getLines.mkString.parseJson.convertTo[User]
   }
 }
